@@ -8,11 +8,11 @@ const props = defineProps({
 </script>
 
 <template>
-  <n-card class="card" title="带封面的卡片">
-    <template #cover>
-      <img src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg" style="height:100px; border-radius: 1.5em" />
-    </template>
-    卡片内容
+  <n-card class="card" title="JetBrains">
+    <n-avatar
+        :size="48"
+        src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
+    />
   </n-card>
 </template>
 

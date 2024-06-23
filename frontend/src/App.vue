@@ -2,6 +2,7 @@
 import {ref} from "vue"
 import DefaultPage from "@/pages/DefaultPage.vue";
 import CustomizePage from "@/pages/CustomizePage.vue";
+import DyamickBackground from "@/components/DyamickBackground.vue";
 let page = ref("defaultPage");
 let btnTxt = ref("定制")
 function switchPage() {
@@ -10,10 +11,13 @@ function switchPage() {
 }
 </script>
 <template>
+  <dyamick-background />
   <div class="container">
-    <n-button class="floating-button" @click="switchPage"> {{ btnTxt }} </n-button>
-    <default-page v-if="page==='defaultPage'"/>
-    <customize-page v-if="page==='customizePage'"/>
+    <main>
+      <n-button class="floating-button" @click="switchPage"> {{ btnTxt }} </n-button>
+      <default-page v-if="page==='defaultPage'"/>
+      <customize-page v-if="page==='customizePage'"/>
+    </main>
   </div>
 
 </template>
