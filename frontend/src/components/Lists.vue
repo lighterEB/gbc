@@ -39,22 +39,10 @@ onMounted(() => {
   height: 200px;
   transform: perspective(300px) rotateX(180deg);
   opacity: 0;
-  transition: transform 0.8s ease, opacity 100s ease;
+  transition: transform 0.8s ease, opacity 1s ease;
 }
 .grid-item.dealt {
   transForm: translateY(0);
   opacity: 1;
-}
-
-.card-content {
-  background-color: lightblue;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 5%;
-  width: 100%;
-  height: 100%;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 </style>
