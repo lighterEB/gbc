@@ -15,7 +15,7 @@ const dealCards = () => {
 
 const getCardStyle = (index) => {
   const delay = (index + 1) * 0.1
-  return dealt.value ? { transitionDelay: `${delay}s` }:{}
+  return dealt.value ? { transitionDelay: `${delay}s`}:{}
 };
 
 onMounted(() => {
@@ -25,7 +25,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <n-grid :x-gap="20" :y-gap="20" cols="4" style="width: 60%">
+  <n-grid :x-gap="20" :y-gap="20" cols="4" style="width: 90%; margin-left: 5%; margin-top: 5%">
     <n-gi v-for="(item, index) in items" :key="index"
           :class="['grid-item', {'dealt': dealt}]" :style="getCardStyle(index)">
       <Cards :item="item" />
@@ -35,7 +35,7 @@ onMounted(() => {
 
 <style scoped>
 .grid-item {
-  width: 150%;
+  width: 100%;
   height: 200px;
   transform: perspective(300px) rotateX(180deg);
   opacity: 0;
