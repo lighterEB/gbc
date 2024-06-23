@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue';
 import { NGrid, NGi } from 'naive-ui';
 import Cards from "@/components/Cards.vue";
 
-const items = ref([1, 2, 3, 4, 5, 6, 7, 8, 9]);  // 示例数组，可以根据需要修改
+const items = ref([1, 2, 3, 4, 5, 6, 7, 8, 9,1, 2, 3, 4, 5, 6, 7, 8, 9 ]);  // 示例数组，可以根据需要修改
 const dealt = ref(false);
 
 const dealCards = () => {
