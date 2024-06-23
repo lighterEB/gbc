@@ -1,26 +1,74 @@
-<script setup>
-const bookList = [
-  {id: 1, name: '《红楼梦》', author: '曹雪芹'},
-  {id: 2, name: '《三国演义》', author: '罗贯中'},
-  {id: 3, name: '《西游记》', author: '吴承恩'},
-  {id: 4, name: '《水浒传》', author: '施耐庵'}
-]
-</script>
-
 <template>
-  <div class="bookshelf">
-  </div>
+  <n-grid :x-gap="12" :y-gap="8" :cols="4">
+    <n-form-item-gi label="数量">
+      <n-input-number v-model:value="gridItemCount" :min="1" />
+    </n-form-item-gi>
+    <n-form-item-gi label="折叠后行数">
+      <n-input-number v-model:value="gridCollapsedRows" :min="1" />
+    </n-form-item-gi>
+    <n-form-item-gi label="打开后缀节点">
+      <n-switch v-model:value="showSuffix" />
+    </n-form-item-gi>
+    <n-form-item-gi label="折叠栅格">
+      <n-switch v-model:value="gridCollapsed" />
+    </n-form-item-gi>
+  </n-grid>
+  <n-grid
+      :cols="5"
+      :collapsed="gridCollapsed"
+      :collapsed-rows="gridCollapsedRows"
+  >
+    <n-gi
+        v-for="i in gridItemCount"
+        :key="i"
+        :class="i % 2 ? 'green' : 'light-green'"
+    >
+      {{ i }}
+    </n-gi>
+    <n-gi v-if="showSuffix" suffix class="suffix" #="{ overflow }">
+      {{ overflow ? '存在溢出' : '不存在溢出' }}
+    </n-gi>
+  </n-grid>
 </template>
 
+<script>
+import { defineComponent, ref } from "vue";
+
+export default defineComponent({
+  setup() {
+    return {
+      gridCollapsed: ref(false),
+      gridCollapsedRows: ref(1),
+      gridItemCount: ref(4),
+      showSuffix: ref(true)
+    };
+  }
+});
+</script>
+
 <style scoped>
-.bookshelf {
+.suffix {
+  height: 108px;
+  border: 1px solid rgba(0, 128, 0, 0.36);
+  box-sizing: border-box;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
-  color: mediumslateblue;
+  justify-content: center;
+}
+.light-green {
+  height: 108px;
+  background-color: rgba(0, 128, 0, 0.12);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.green {
+  height: 108px;
+  background-color: rgba(0, 128, 0, 0.24);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
