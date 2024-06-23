@@ -2,29 +2,44 @@
 import {ref} from "vue"
 import DefaultPage from "@/pages/DefaultPage.vue";
 import CustomizePage from "@/pages/CustomizePage.vue";
-import DyamickBackground from "@/components/DyamickBackground.vue";
-let page = ref("defaultPage");
-let btnTxt = ref("定制")
+import DynamicBackground from "@/components/DynamicBackground.vue";
+
+const page = ref("customizePage");
+const btnTxt = ref("定制")
+
 function switchPage() {
+  btnTxt.value = btnTxt.value === "定制" ? "默认" : "定制"
   page.value = page.value === "defaultPage" ? "customizePage" : "defaultPage";
-  btnTxt.value = btnTxt.value === "定制"?"默认":"定制"
 }
+
 </script>
 <template>
-  <dyamick-background />
+  <DynamicBackground/>
   <div class="container">
-    <main>
-      <n-button class="floating-button" @click="switchPage"> {{ btnTxt }} </n-button>
-      <default-page v-if="page==='defaultPage'"/>
-      <customize-page v-if="page==='customizePage'"/>
+    <main class="main">
+      <n-button class="floating-button" @click="switchPage"> {{ btnTxt }}</n-button>
+      <transition name="flip" mode="out-in">
+        <component :is="page === 'customizePage'?DefaultPage:CustomizePage"/>
+      </transition>
     </main>
   </div>
 
 </template>
 <style scoped>
-.container{
+.container {
   position: relative;
 }
+
+.flip-enter-active, .flip-leave-active {
+  transition: transform 0.6s, opacity 0.1s;
+  transform-style: preserve-3d;
+}
+
+.flip-enter, .flip-leave-to {
+  transform: rotateY(90deg);
+}
+
+
 .floating-button {
   position: fixed;
   right: 20px;
@@ -45,6 +60,7 @@ function switchPage() {
   z-index: 10;
   opacity: 0.6;
 }
+
 .floating-button:hover {
   background-color: #0056b3;
 }
