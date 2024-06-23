@@ -18,7 +18,7 @@ const getCardStyle = (index) => {
   return dealt.value ? {transitionDelay: `${delay}s`} : {}
 };
 
-const hoverStyle = (hovered, index) => ({
+const hoverStyle = (hovered) => ({
       // transform: hovered ? 'translateY(-10px)' : '',
       bottom: hovered?'5%':'0px',
       position: 'relative',
@@ -35,7 +35,7 @@ onMounted(() => {
 <template>
   <n-grid :x-gap="20" :y-gap="30" cols="4" style="width: 90%; margin-left: 5%; margin-top: 5%">
     <n-gi v-for="(item, index) in items" :key="index"
-          :class="['grid-item', {'dealt': dealt}]" :style="[getCardStyle(index), hoverStyle(isHovered[index], index)]"
+          :class="['grid-item', {'dealt': dealt}]" :style="[getCardStyle(index), hoverStyle(isHovered[index])]"
           @mouseenter="isHovered[index] = true"
           @mouseleave="isHovered[index] = false"
     >
