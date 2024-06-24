@@ -7,19 +7,20 @@ const props = defineProps({
     required: true
   }
 })
-const text = ref("********************************")
+const isHovered = ref(false);
+const text = ref("*****************************************************")
 </script>
 
 <template>
-  <n-card class="card" title="JetBrains">
+  <n-card class="card" title="JetBrains" @mouseenter="isHovered = true" @mouseleave="isHovered = false">
     <n-avatar
         :size="48"
         src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
     />
-    <n-space class="text-area">
+    <n-space class="text-area" v-if="!isHovered">
       {{ text }}
     </n-space>
-      <n-button class="btn-copy" text color="#8a2be2">
+      <n-button class="btn-copy" text color="#8a2be2" v-if="isHovered">
         复制
       </n-button>
   </n-card>
@@ -50,19 +51,15 @@ const text = ref("********************************")
   width: 100%;
   height: 50%;
   padding: 10px;
-  opacity: 0;
-  position: fixed;
-}
-.text-area:hover{
-  visibility: hidden;
+  opacity: 1;
+  color: black;
 }
 
 .btn-copy:hover {
-  border:0.2rem solid #9a49e5;
+  border:0.2rem solid #661dab;
   border-radius: 1.5rem;
   width: 100%;
   height: 50%;
-  top: 10%;
   color: black;
   opacity: 1;
 }

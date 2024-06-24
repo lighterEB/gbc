@@ -33,7 +33,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <n-grid :x-gap="20" :y-gap="30" cols="4" style="width: 90%; margin-left: 5%; margin-top: 5%">
+  <n-grid :x-gap="20" :y-gap="30" cols="4" style="width: 83%; margin-left: 5%; margin-top: 5%">
     <n-gi v-for="(item, index) in items" :key="index"
           :class="['grid-item', {'dealt': dealt}]" :style="[getCardStyle(index), hoverStyle(isHovered[index])]"
           @mouseenter="isHovered[index] = true"
