@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"crypto"
@@ -13,7 +13,7 @@ import (
 	"os"
 )
 
-func main() {
+func aaa() {
 
 	// 获取证书
 	ca, _ := os.ReadFile("ca.crt")

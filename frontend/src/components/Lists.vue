@@ -2,10 +2,20 @@
 import {onMounted, ref} from 'vue';
 import {NGi, NGrid} from 'naive-ui';
 import Cards from "@/components/Cards.vue";
+import {QueryData} from "../../wailsjs/go/main/App"
 
-const items = ref([1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9]);  // 示例数组，可以根据需要修改
+let productsList = ref([])
+function queryData() {
+  QueryData().then((res) => {
+    console.log(res)
+    if (res.code == 200) {
+      productsList.value = res.data===undefined ? [] : res.data["products"]
+    }
+  })
+}
+
 const dealt = ref(false);
-const isHovered = ref(Array(items.value.length).fill(false));
+const isHovered = ref(Array(productsList.value.length).fill(false));
 const dealCards = () => {
   dealt.value = false; // Reset the dealt state
   setTimeout(() => {
@@ -28,13 +38,14 @@ const hoverStyle = (hovered) => ({
 
 onMounted(() => {
   dealCards();
+  queryData();
 });
 
 </script>
 
 <template>
-  <n-grid :x-gap="20" :y-gap="30" cols="4" style="width: 83%; margin-left: 5%; margin-top: 5%">
-    <n-gi v-for="(item, index) in items" :key="index"
+  <n-grid :x-gap="30" :y-gap="30" cols="4" style="width: 90%; margin-left: 5%; margin-top: 5%">
+    <n-gi v-for="(item, index) in productsList" :key="index"
           :class="['grid-item', {'dealt': dealt}]" :style="[getCardStyle(index), hoverStyle(isHovered[index])]"
           @mouseenter="isHovered[index] = true"
           @mouseleave="isHovered[index] = false"

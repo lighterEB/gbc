@@ -1,9 +1,9 @@
 package response
 
 type Response[T any] struct {
-	Code int
-	Msg  string
-	Data T
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+	Data T      `json:"data"`
 }
 
 type Code struct {

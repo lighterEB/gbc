@@ -1,8 +1,9 @@
 <script setup>
-import {ref} from "vue"
+import {ref, reactive} from "vue"
 import DefaultPage from "@/pages/DefaultPage.vue";
 import CustomizePage from "@/pages/CustomizePage.vue";
 import DynamicBackground from "@/components/DynamicBackground.vue";
+
 
 const page = ref("customizePage");
 const btnTxt = ref("定制")
@@ -11,6 +12,8 @@ function switchPage() {
   btnTxt.value = btnTxt.value === "定制" ? "默认" : "定制"
   page.value = page.value === "defaultPage" ? "customizePage" : "defaultPage";
 }
+
+
 
 </script>
 <template>
@@ -23,8 +26,8 @@ function switchPage() {
       </transition>
     </main>
   </div>
-
 </template>
+
 <style scoped>
 .container {
   position: relative;
