@@ -18,6 +18,7 @@ function switchPage() {
 </script>
 <template>
   <DynamicBackground/>
+  <n-message-provider>
   <div class="container">
     <main class="main">
       <n-button class="floating-button" @click="switchPage"> {{ btnTxt }}</n-button>
@@ -26,6 +27,7 @@ function switchPage() {
       </transition>
     </main>
   </div>
+</n-message-provider>
 </template>
 
 <style scoped>

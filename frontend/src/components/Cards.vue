@@ -1,6 +1,6 @@
 <script setup>
-import { useMessage } from 'naive-ui';
-import {ref} from 'vue'
+import { useMessage, NAlert  } from 'naive-ui';
+import {ref, h} from 'vue'
 
 const props = defineProps({
   item: {
@@ -12,6 +12,35 @@ const title = ref(props.item["name"]);
 const pic = ref(props.item["pic"]);
 const isHovered = ref(false);
 const text = ref("************************************")
+const msgInfo = useMessage()
+
+const rendMessage = (props) => {
+  const { type } = props;
+  return h(
+    NAlert,
+    {
+      closable: props.closable,
+      onclose: props.onclose,
+      type: type==="reloading"?"default":type,
+      title: "获取激活码",
+      style: {
+        opacity: "0.8",
+        backgroundColor: "pink",
+      },
+    },
+    {
+      default: () => props.content
+    }
+  );
+};
+
+function copyCode() {
+  msgInfo.success("你已经获取激活码，现在可以直接粘贴啦！", {
+    render: rendMessage,
+    closable: true,
+    duration: 1000
+  });
+}
 
 </script>
 
@@ -27,7 +56,7 @@ const text = ref("************************************")
       <n-text class="text-area" v-if="!isHovered">
         {{ text }}
       </n-text>
-      <n-button class="btn-copy" text color="#8a2be2" v-if="isHovered">
+      <n-button class="btn-copy" text @click="copyCode" color="#8a2be2" v-if="isHovered">
         复制
       </n-button>
     </div>
