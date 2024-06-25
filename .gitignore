@@ -4,5 +4,5 @@ frontend/node_modules
 .idea
 *.iml
 .vscode
-resources/ca.crt
-resources/ca.key
+backend/bridge/resources/ca.crt
+backend/bridge/resources/ca.key

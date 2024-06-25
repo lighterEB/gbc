@@ -2,8 +2,7 @@ package api
 
 import (
 	"fmt"
-	"os"
-	"path"
+	"gbc/backend/bridge"
 	"strings"
 )
 
@@ -19,18 +18,21 @@ type Products struct {
 // 获取展示数据
 func QueryData() (*Products, error) {
 	var products Products
-	s1, _ := os.Getwd()
+	//s1, _ := os.Getwd()
 	//s1, _ := filepath.Abs(picsPath)
-	fmt.Println(s1)
-	filePath := path.Join(s1, "resources", "pics")
-	fmt.Println(filePath)
-	rd, err := os.ReadDir(filePath)
+	//fmt.Println(s1)
+	//filePath := path.Join(s1, "assets", "resources", "pics")
+	//fmt.Println(filePath)
+	fDir := "resources/pics"
+	rd, err := bridge.Fs.ReadDir(fDir)
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(rd)
 	for _, fi := range rd {
 		if !fi.IsDir() {
-			f, err := os.ReadFile(filePath + string(os.PathSeparator) + fi.Name())
+			fData := fDir + "/" + fi.Name()
+			f, err := bridge.Fs.ReadFile(fData)
 			if err != nil {
 				return nil, err
 			}
