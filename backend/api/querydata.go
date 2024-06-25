@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 )
 
 type Product struct {
@@ -35,7 +36,7 @@ func QueryData() (*Products, error) {
 			}
 
 			product := Product{
-				Name: fi.Name(),
+				Name: strings.Split(fi.Name(), ".")[0],
 				Pic:  string(f),
 			}
 			products.Products = append(products.Products, &product)

@@ -1,4 +1,5 @@
 <script setup>
+import { useMessage } from 'naive-ui';
 import {ref} from 'vue'
 
 const props = defineProps({
@@ -7,23 +8,22 @@ const props = defineProps({
     required: true
   }
 })
-const title = ref(props.item["name"].split('.')[0]);
+const title = ref(props.item["name"]);
 const pic = ref(props.item["pic"]);
 const isHovered = ref(false);
 const text = ref("************************************")
-console.log(pic.value)
-console.log(isHovered.value)
+
 </script>
 
 <template>
-  <n-card class="card" :title="title">
+  <n-card class="card" :title="title" @mouseleave="isHovered = false">
     <n-avatar :size="64" style="background-color: #9a49e5;">
       <div v-html="pic"></div>
     </n-avatar>
     <!-- :size="48"
     src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
 /> -->
-    <div @mouseenter="isHovered = true" @mouseleave="isHovered = false" style="border: 1em lightgreen">
+    <div @mouseenter="isHovered = true" @mouseleave="isHovered = false" style="border: 1em lightgreen; width: 100%; height: 50%; bottom: 20px;">
       <n-text class="text-area" v-if="!isHovered">
         {{ text }}
       </n-text>
@@ -57,7 +57,7 @@ console.log(isHovered.value)
   border: 0.2rem solid #9a49e5;
   border-radius: 1.5rem;
   width: 100%;
-  height: 50%;
+  height: 100%;
   padding: 10px;
   opacity: 1;
   color: black;
@@ -67,7 +67,7 @@ console.log(isHovered.value)
   border: 0.2rem solid #661dab;
   border-radius: 1.5rem;
   width: 100%;
-  height: 50%;
+  height: 100%;
   color: black;
   opacity: 1;
 }
