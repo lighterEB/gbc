@@ -1,6 +1,6 @@
 <script setup>
 import { useMessage, NAlert  } from 'naive-ui';
-import {ref, h} from 'vue'
+import {ref, h, reactive} from 'vue'
 
 const props = defineProps({
   item: {
@@ -13,6 +13,11 @@ const pic = ref(props.item["pic"]);
 const isHovered = ref(false);
 const text = ref("************************************")
 const msgInfo = useMessage()
+
+const params = reactive({
+  "productId"
+})
+
 
 const rendMessage = (props) => {
   const { type } = props;

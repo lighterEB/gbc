@@ -10,13 +10,14 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"gbc/backend/bridge"
 	"os"
 )
 
-func aaa() {
-
+func KeyGen() {
+	caPath := "resources/ca.crt"
 	// 获取证书
-	ca, _ := os.ReadFile("ca.crt")
+	ca, _ := bridge.Fs.ReadFile(caPath)
 	certBase64 := base64.StdEncoding.EncodeToString(ca)
 
 	// 签名数据
