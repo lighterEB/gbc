@@ -13,7 +13,21 @@ import (
 	"fmt"
 	"gbc/backend/bridge"
 	"gbc/backend/entity"
+	"gbc/backend/response"
 )
+
+func KeyGenRequest(info string) interface{} {
+	var license entity.License
+	infoBytes := []byte(info)
+	json.Unmarshal(infoBytes, &license)
+	license.CreateLis()
+	key, err := KeyGen(&license)
+	if err != nil {
+		return response.NewErrorResponse[string](500, "failed to generation a key")
+	}
+	return response.NewSuccessResponse(key)
+
+}
 
 func KeyGen(license *entity.License) (string, error) {
 	caPath := "resources/ca.crt"

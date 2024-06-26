@@ -2,7 +2,7 @@ package entity
 
 type License struct {
 	LicenseId          string         `json:"licenseId"`
-	LicenseName        string         `json:"licenseName"`
+	LicenseeName       string         `json:"licenseeName"`
 	AssigneeName       string         `json:"assigneeName"`
 	AssigneeEmail      string         `json:"assigneeEmail"`
 	LicenseRestriction string         `json:"licenseRestriction"`
