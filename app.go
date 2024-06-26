@@ -35,3 +35,7 @@ func (a *App) QueryData() interface{} {
 	productsRaw := json.RawMessage(productsJson)
 	return response.NewSuccessResponse(productsRaw)
 }
+
+func (a *App) KeyGenRequest(info string) interface{} {
+	return api.KeyGenRequest(info)
+} 

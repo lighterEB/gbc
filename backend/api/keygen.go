@@ -21,7 +21,7 @@ func KeyGenRequest(info string) interface{} {
 	infoBytes := []byte(info)
 	json.Unmarshal(infoBytes, &license)
 	license.CreateLis()
-	key, err := KeyGen(&license)
+	key, err := keyGen(&license)
 	if err != nil {
 		return response.NewErrorResponse[string](500, "failed to generation a key")
 	}
@@ -29,7 +29,7 @@ func KeyGenRequest(info string) interface{} {
 
 }
 
-func KeyGen(license *entity.License) (string, error) {
+func keyGen(license *entity.License) (string, error) {
 	caPath := "resources/ca.crt"
 	// 获取证书
 	ca, _ := bridge.Fs.ReadFile(caPath)

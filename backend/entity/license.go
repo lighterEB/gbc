@@ -25,14 +25,10 @@ type ProductList struct {
 }
 
 func (license *License) CreateLis() {
-	var productList = ProductList{
-		FallbackDate: "2099-12-31",
-		PaidUpTo:     "2099-12-31",
-	}
-	license.Products = append(license.Products, &productList)
 	license.Metadata = "0120230914PSAX000005"
 	license.Hash = ""
 	license.GracePeriodDays = 7
+	license.CheckConcurrentUse = false
 	license.AutoProlongated = false
 	license.IsAutoProlongated = false
 	license.Trial = false

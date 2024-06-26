@@ -1,13 +1,15 @@
 <script setup>
-import { useMessage, NAlert  } from 'naive-ui';
-import {ref, h, reactive} from 'vue'
-
+import { useMessage, NAlert } from 'naive-ui';
+import { ref, h, reactive } from 'vue'
+import { KeyGenRequest } from '../../wailsjs/go/main/App'
+import { clipboard } from 'clipboard'
 const props = defineProps({
   item: {
     type: Object,
     required: true
   }
 })
+
 const title = ref(props.item["name"]);
 const pic = ref(props.item["pic"]);
 const isHovered = ref(false);
@@ -15,10 +17,15 @@ const text = ref("************************************")
 const msgInfo = useMessage()
 
 const params = reactive({
-  "productId"
+  "licenseId": "DADDYHU726",
+  "licenseeName": "lighterEB",
+  "assigneeName": "daddyhu",
+  "assigneeEmail": "hellohus726@126.com",
+  "products": [{ "code": "PCWMP", "fallbackDate": "2099-12-31", "paidUpTo": "2099-12-31", "extended": "true" }, { "code": "PSI", "fallbackDate": "2099-12-31", "paidUpTo": "2099-12-31", "extended": "true" }]
 })
-
-
+const produts = reactive(
+  { "code": "", "fallbackDate": "2099-12-31", "paidUpTo": "2099-12-31", "extended": "false" }
+)
 const rendMessage = (props) => {
   const { type } = props;
   return h(
@@ -26,7 +33,7 @@ const rendMessage = (props) => {
     {
       closable: props.closable,
       onclose: props.onclose,
-      type: type==="reloading"?"default":type,
+      type: type === "reloading" ? "default" : type,
       title: "获取激活码",
       style: {
         opacity: "0.8",
@@ -39,14 +46,53 @@ const rendMessage = (props) => {
   );
 };
 
-function copyCode() {
-  msgInfo.success("你已经获取激活码，现在可以直接粘贴啦！", {
-    render: rendMessage,
-    closable: true,
-    duration: 1000
+async function copyCode() {
+  switch (props.item["name"]) {
+    case "CLion":
+      produts.code = "CL"
+      break
+    case "DataGrip":
+      produts.code = "DG"
+      break
+    case "GoLand":
+      produts.code = "GO"
+      break
+    case "IDEA":
+      produts.code = "II"
+      break
+    case "PyCharm":
+      produts.code = "PC"
+      break
+    case "Rider":
+      produts.code = "RD"
+      break
+    case "RustRover":
+      produts.code = "RR"
+      break
+    case "WebStorm":
+      produts.code = "WS"
+  }
+  params.products.push(produts)
+  console.log(params.products)
+
+
+  await KeyGenRequest(JSON.stringify(params)).then(res => {
+    if (res.code == 200) {
+      navigator.clipboard.writeText(res.data)
+      msgInfo.success("你已经获取激活码，现在可以直接粘贴啦！", {
+        render: rendMessage,
+        closable: true,
+        duration: 1000
+      });
+    } else {
+      msgInfo.error("糟糕~激活码丢了~~！", {
+        render: rendMessage,
+        closable: true,
+        duration: 1000
+      });
+    }
   });
 }
-
 </script>
 
 <template>
@@ -57,11 +103,12 @@ function copyCode() {
     <!-- :size="48"
     src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
 /> -->
-    <div @mouseenter="isHovered = true" @mouseleave="isHovered = false" style="border: 1em lightgreen; width: 100%; height: 50%; bottom: 20px;">
+    <div @mouseenter="isHovered = true" @mouseleave="isHovered = false"
+      style="border: 1em lightgreen; width: 100%; height: 50%; bottom: 20px;">
       <n-text class="text-area" v-if="!isHovered">
         {{ text }}
       </n-text>
-      <n-button class="btn-copy" text @click="copyCode" color="#8a2be2" v-if="isHovered">
+      <n-button class="btn-copy" text @click="copyCode()" color="#8a2be2" v-if="isHovered">
         复制
       </n-button>
     </div>
