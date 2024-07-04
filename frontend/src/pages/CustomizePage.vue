@@ -1,5 +1,6 @@
 <script setup>
 import { ref,reactive } from "vue"
+import { parseTime } from "../utils/date";
 const time = ref(null)
 const value = ref(null)
 const options= [
@@ -23,8 +24,8 @@ const listParams = reactive({
   "code": "",
   "name": "",
   "email": "",
-  "extended": value.value,
-  "expire": time.value
+  "extended": "",
+  "expire": ""
 })
 
 const params = reactive({
@@ -38,10 +39,20 @@ const produts = reactive({ "code": "", "fallbackDate": "", "paidUpTo": "", "exte
 
 
 function genKey() {
+  listParams.expire = parseTime(time.value, "{y}-{m}-{d}")
+  listParams.extended = value.value
+  produts.code = listParams.code
+  produts.fallbackDate = listParams.expire
+  produts.paidUpTo = listParams.expire
+  produts.extended = listParams.extended
+  params.licenseeName = listParams.name
+  params.assigneeName = listParams.name
+  params.assigneeEmail = listParams.email
+  params.products.forEach((item) => {
+    item.fallbackDate = listParams.expire
+    item.paidUpTo = listParams.expire
+  })
   params.products.push(produts)
-  console.log(listParams.code)
-  console.log(listParams.expire)
-  console.log(time.value)
   console.log(params)
 }
 </script>
@@ -84,7 +95,7 @@ function genKey() {
       <n-list-item>
         <n-space>
           <n-thing>过期时间: </n-thing>
-          <n-date-picker v-model:value="time" size="medium" type="date"  placeholder="请选择日期"/>
+          <n-date-picker v-model:value="time" size="medium" type="date" placeholder="请选择日期"/>
         </n-space>
       </n-list-item>
       <n-list-item>
