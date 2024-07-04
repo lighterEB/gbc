@@ -29,7 +29,7 @@ const tips = `如果要激活插件,
           <n-input placeholder="请输入产品Code" style="width: 100%;"/>
           <n-tooltip max-width="200px" placement="right-start" trigger="hover">
             <template #trigger>
-              <n-tag type="info" style="border-radius: 1em;">
+              <n-tag type="info" style="border-radius: 1em; width: 20px; height: 20px; padding-left: 1px; padding-top: 1px; top: 5px;">
                 <n-image src="../../assets/images/question.png" style="width: 18px; height: 18px;"/>
               </n-tag>
             </template>
