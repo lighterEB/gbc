@@ -1,15 +1,15 @@
 <script setup>
-import { ref } from "vue"
-const timestamp = ref(null)
+import { ref,reactive } from "vue"
+const time = ref(null)
 const value = ref(null)
 const options= [
   {
     label: "是",
-    value: true
+    value: "true"
   },
   {
     label: "否",
-    value: false
+    value: "false"
   }
 ]
 const tips = `如果要激活插件,
@@ -18,6 +18,32 @@ const tips = `如果要激活插件,
 把数字替换到下面的链接'#'（注意是替换）\r\n https://plugins.jetbrains.com/api/plugins/#?filed=code ，
 然后浏览器打开这个链接找到"purchaseInfo"中的"productCode",
 并且选择是插件`
+
+const listParams = reactive({
+  "code": "",
+  "name": "",
+  "email": "",
+  "extended": value.value,
+  "expire": time.value
+})
+
+const params = reactive({
+  "licenseId": "",
+  "licenseeName": "",
+  "assigneeName": "",
+  "assigneeEmail": "",
+  "products": [{ "code": "PCWMP", "fallbackDate": "", "paidUpTo": "", "extended": "true" }, { "code": "PSI", "fallbackDate": "", "paidUpTo": "", "extended": "true" }]
+})
+const produts = reactive({ "code": "", "fallbackDate": "", "paidUpTo": "", "extended": "" })
+
+
+function genKey() {
+  params.products.push(produts)
+  console.log(listParams.code)
+  console.log(listParams.expire)
+  console.log(time.value)
+  console.log(params)
+}
 </script>
 
 <template>
@@ -26,8 +52,8 @@ const tips = `如果要激活插件,
       <n-list-item>
         <n-space>
           <n-thing class="n-thing">产品Code: </n-thing>
-          <n-input placeholder="请输入产品Code" style="width: 100%;"/>
-          <n-tooltip max-width="200px" placement="right-start" trigger="hover">
+          <n-input placeholder="请输入产品Code" v-model:value="listParams.code"  style="width: 100%;"/>
+          <n-tooltip width=200 placement="right-start" trigger="hover">
             <template #trigger>
               <n-tag type="info" style="border-radius: 1em; width: 20px; height: 20px; padding-left: 1px; padding-top: 1px; top: 5px;">
                 <n-image src="../../assets/images/question.png" style="width: 18px; height: 18px;"/>
@@ -46,24 +72,24 @@ const tips = `如果要激活插件,
       <n-list-item>
         <n-space>
           <n-thing class="n-thing">账号: </n-thing>
-          <n-input placeholder="请输入账号" />
+          <n-input placeholder="请输入账号" v-model:value="listParams.name" />
         </n-space>
       </n-list-item>
       <n-list-item>
         <n-space>
           <n-thing class="n-thing">邮箱: </n-thing>
-          <n-input placeholder="请输入邮箱"/>
+          <n-input placeholder="请输入邮箱" v-model:value="listParams.email"/>
         </n-space>
       </n-list-item>
       <n-list-item>
         <n-space>
           <n-thing>过期时间: </n-thing>
-          <n-date-picker v-model:value="timestamp" size="medium" type="date"  placeholder="请选择日期"/>
+          <n-date-picker v-model:value="time" size="medium" type="date"  placeholder="请选择日期"/>
         </n-space>
       </n-list-item>
       <n-list-item>
         <n-space style="padding-left: 40%;">
-          <n-button>生成</n-button>
+          <n-button @click="genKey()">生成</n-button>
         </n-space>
       </n-list-item>
     </n-list>
