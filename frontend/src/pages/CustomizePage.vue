@@ -3,11 +3,13 @@ import Form from "../components/Form.vue"
 </script>
 
 <template>
-  <n-flex class="container">
-    <n-space size="large" class="formlist">
-      <Form />
-    </n-space>
-  </n-flex>
+  <n-message-provider>
+    <n-flex class="container">
+      <n-space size="large" class="formlist">
+        <Form />
+      </n-space>
+    </n-flex>
+  </n-message-provider>
 </template>
 
 <style scoped>
@@ -17,6 +19,7 @@ import Form from "../components/Form.vue"
   height: 100vh;
   justify-content: center;
 }
+
 .formlist {
   background-color: aliceblue;
   width: 100%;
