@@ -65,18 +65,17 @@ const produts = reactive({ "code": "", "fallbackDate": "", "paidUpTo": "", "exte
 
 
 function genKey() {
-    listParams.expire = parseTime(time.value, "{y}-{m}-{d}")
-    listParams.extended = value.value
-    produts.code = listParams.code
-    produts.fallbackDate = listParams.expire
-    produts.paidUpTo = listParams.expire
-    produts.extended = listParams.extended
-    params.licenseeName = listParams.name
-    params.assigneeName = listParams.name
-    params.assigneeEmail = listParams.email
+    const expired = parseTime(listParams.value.datetimeSelect, "{y}-{m}-{d}")
+    produts.code = listParams.value.productCode
+    produts.fallbackDate = expired
+    produts.paidUpTo = expired
+    produts.extended = listParams.value.extendSelect
+    params.licenseeName = listParams.value.nameInput
+    params.assigneeName = listParams.value.nameInput
+    params.assigneeEmail = listParams.value.emailInput
     params.products.forEach((item) => {
-        item.fallbackDate = listParams.expire
-        item.paidUpTo = listParams.expire
+        item.fallbackDate = expired
+        item.paidUpTo = expired
     })
     params.products.push(produts)
     console.log(params)
@@ -84,8 +83,9 @@ function genKey() {
 
 function handleValidateButtonClick(e) {
     e.preventDefault();
-    formRef.value?.validata((errors) => {
+    formRef.value?.validate((errors) => {
         if (!errors){
+            genKey()
             message.success("验证成功");
         }else {
             message.error("验证失败");
@@ -128,5 +128,6 @@ function handleValidateButtonClick(e) {
             </n-button>
         </div>
     </n-form>
+    <!-- <pre>{{ JSON.stringify(listParams) }}</pre> -->
 </template>
 <style scoped></style>

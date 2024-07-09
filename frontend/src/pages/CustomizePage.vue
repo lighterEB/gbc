@@ -3,13 +3,11 @@ import Form from "../components/Form.vue"
 </script>
 
 <template>
-  <n-message-provider>
-    <n-flex class="container">
-      <n-space size="large" class="formlist">
-        <Form />
-      </n-space>
-    </n-flex>
-  </n-message-provider>
+  <n-flex class="container">
+    <n-space size="large" class="formlist">
+      <Form />
+    </n-space>
+  </n-flex>
 </template>
 
 <style scoped>
