@@ -1,5 +1,5 @@
 <script setup>
-import {ref, reactive} from "vue"
+import {ref} from "vue"
 import DefaultPage from "@/pages/DefaultPage.vue";
 import CustomizePage from "@/pages/CustomizePage.vue";
 import DynamicBackground from "@/components/DynamicBackground.vue";

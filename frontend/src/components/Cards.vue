@@ -2,7 +2,6 @@
 import { useMessage, NAlert } from 'naive-ui';
 import { ref, h, reactive } from 'vue'
 import { KeyGenRequest } from '../../wailsjs/go/main/App'
-import { clipboard } from 'clipboard'
 const props = defineProps({
   item: {
     type: Object,

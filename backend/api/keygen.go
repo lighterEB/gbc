@@ -2,8 +2,8 @@ package api
 
 import (
 	"crypto"
-	"crypto/rand"
 	"crypto/rsa"
+	"crypto/rand"
 	"crypto/sha1"
 	"crypto/x509"
 	"encoding/base64"
@@ -14,6 +14,8 @@ import (
 	"gbc/backend/bridge"
 	"gbc/backend/entity"
 	"gbc/backend/response"
+	"time"
+	mrand "math/rand"
 )
 
 func KeyGenRequest(info string) interface{} {
@@ -21,6 +23,9 @@ func KeyGenRequest(info string) interface{} {
 	infoBytes := []byte(info)
 	json.Unmarshal(infoBytes, &license)
 	license.CreateLis()
+	if license.LicenseId == "" {
+		license.LicenseId = randomString(8)
+	}
 	key, err := keyGen(&license)
 	if err != nil {
 		return response.NewErrorResponse[string](500, "failed to generation a key")
@@ -97,4 +102,15 @@ func parsePrivateKey() (interface{}, error) {
 	}
 
 	return privateKey, nil
+}
+
+func randomString(length int) string {
+	charset := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	result := make([]byte, length)
+	seededRand := mrand.New(mrand.NewSource(time.Now().UnixNano()))
+
+	for i := range result {
+		result[i] = charset[seededRand.Intn(len(charset))]
+	}
+	return string(result)
 }

@@ -2,6 +2,7 @@
 import { ref, reactive } from 'vue'
 import { parseTime } from "../utils/date";
 import { useMessage } from 'naive-ui';
+import { KeyGenRequest } from '../../wailsjs/go/main/App'
 const tips = `如果要激活插件,
 请在 https://plugins.jetbrains.com/搜索插件名称,
 可以在插件首页看到URL中包含一串数字，
@@ -64,7 +65,7 @@ const params = reactive({
 const produts = reactive({ "code": "", "fallbackDate": "", "paidUpTo": "", "extended": "" })
 
 
-function genKey() {
+async function genKey() {
     const expired = parseTime(listParams.value.datetimeSelect, "{y}-{m}-{d}")
     produts.code = listParams.value.productCode
     produts.fallbackDate = expired
@@ -79,6 +80,21 @@ function genKey() {
     })
     params.products.push(produts)
     console.log(params)
+    await KeyGenRequest(JSON.stringify(params)).then(res => {
+        try {
+            if (res.code == 200) {
+                navigator.clipboard.writeText(res.data)
+                message.success("激活码已成功生成，可以直接粘贴激活。")
+            } else {
+                message.error("激活码生成失败")
+            }
+        }catch(e) {
+            console.log("激活码生成出错：",e)
+            message.error("出错了，错误原因：",e)
+        }
+        // console.log(res.code)
+        // console.log(res.data)
+    })
 }
 
 function handleValidateButtonClick(e) {
@@ -86,9 +102,8 @@ function handleValidateButtonClick(e) {
     formRef.value?.validate((errors) => {
         if (!errors){
             genKey()
-            message.success("验证成功");
         }else {
-            message.error("验证失败");
+            message.error("请补全信息！");
         }
     });
 }

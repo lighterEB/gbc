@@ -30,7 +30,7 @@ var (
 func NewSuccessResponse[T any](data T) *Response[T] {
 	return &Response[T]{
 		Code: SuccessCode,
-		Msg:  "Success",
+		Msg:  "success",
 		Data: data,
 	}
 }
