@@ -3,6 +3,7 @@ import { ref, reactive } from 'vue'
 import { parseTime } from "../utils/date";
 import { useMessage } from 'naive-ui';
 import { KeyGenRequest } from '../../wailsjs/go/main/App'
+
 const tips = `如果要激活插件,
 请在 https://plugins.jetbrains.com/搜索插件名称,
 可以在插件首页看到URL中包含一串数字，
@@ -107,6 +108,12 @@ function handleValidateButtonClick(e) {
         }
     });
 }
+
+function clearForm() {
+    for (const i in listParams.value) {
+        listParams.value[i] = null
+    }
+}
 </script>
 <template>
     <n-form ref="formRef" :model="listParams" :rules="rules" label-placement="left" label-width="auto"
@@ -137,9 +144,12 @@ function handleValidateButtonClick(e) {
         <n-form-item label="过期时间:" path="datetimeSelect">
             <n-date-picker placeholder="请选择日期" v-model:value="listParams.datetimeSelect" type="date" />
         </n-form-item>
-        <div style="display: flex; justify-content: center">
+        <div style="display: flex; justify-content: center; gap: 20px">
             <n-button round type="primary" @click="handleValidateButtonClick">
                 生成
+            </n-button>
+            <n-button round type="primary" @click="clearForm" >
+                重置
             </n-button>
         </div>
     </n-form>

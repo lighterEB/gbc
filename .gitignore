@@ -7,3 +7,4 @@ frontend/node_modules
 .vscode
 backend/bridge/resources/ca.crt
 backend/bridge/resources/ca.key
+.DS_Store
