@@ -1,7 +1,36 @@
-<script setup>
+<script setup lang="ts">
 import { useMessage, NAlert } from 'naive-ui';
-import { ref, h, reactive } from 'vue'
+import { ref, h, reactive, computed } from 'vue'
 import { KeyGenRequest } from '../../wailsjs/go/main/App'
+
+// Types
+interface Product {
+  code: string;
+  fallbackDate: string;
+  paidUpTo: string;
+  extended: string;
+}
+
+interface LicenseParams {
+  licenseId: string;
+  licenseeName: string;
+  assigneeName: string;
+  assigneeEmail: string;
+  products: Product[];
+}
+
+// Constants
+const PRODUCT_CODES = {
+  CLion: 'CL',
+  DataGrip: 'DG',
+  GoLand: 'GO',
+  IDEA: 'II',
+  PyCharm: 'PC',
+  Rider: 'RD',
+  RustRover: 'RR',
+  WebStorm: 'WS'
+} as const;
+
 const props = defineProps({
   item: {
     type: Object,
@@ -12,19 +41,32 @@ const props = defineProps({
 const title = ref(props.item["name"]);
 const pic = ref(props.item["pic"]);
 const isHovered = ref(false);
-const text = ref("************************************")
+const text = ref("****************")
 const msgInfo = useMessage()
+const isLoading = ref(false);
 
-const params = reactive({
-  "licenseId": "DADDYHU726",
-  "licenseeName": "lighterEB",
-  "assigneeName": "daddyhu",
-  "assigneeEmail": "hellohus726@126.com",
-  "products": [{ "code": "PCWMP", "fallbackDate": "2099-12-31", "paidUpTo": "2099-12-31", "extended": "true" }, { "code": "PSI", "fallbackDate": "2099-12-31", "paidUpTo": "2099-12-31", "extended": "true" }]
+const params = reactive<LicenseParams>({
+  licenseId: "DADDYHU726",
+  licenseeName: "lighterEB",
+  assigneeName: "daddyhu",
+  assigneeEmail: "hellohus726@126.com",
+  products: [
+    { code: "PCWMP", fallbackDate: "2099-12-31", paidUpTo: "2099-12-31", extended: "true" },
+    { code: "PSI", fallbackDate: "2099-12-31", paidUpTo: "2099-12-31", extended: "true" }
+  ]
 })
-const produts = reactive(
-  { "code": "", "fallbackDate": "2099-12-31", "paidUpTo": "2099-12-31", "extended": "false" }
-)
+
+const productTemplate: Product = {
+  code: "",
+  fallbackDate: "2099-12-31",
+  paidUpTo: "2099-12-31",
+  extended: "false"
+}
+
+const getProductCode = computed(() => {
+  return PRODUCT_CODES[props.item["name"]] || '';
+});
+
 const rendMessage = (props) => {
   const { type } = props;
   return h(
@@ -46,117 +88,195 @@ const rendMessage = (props) => {
 };
 
 async function copyCode() {
-  switch (props.item["name"]) {
-    case "CLion":
-      produts.code = "CL"
-      break
-    case "DataGrip":
-      produts.code = "DG"
-      break
-    case "GoLand":
-      produts.code = "GO"
-      break
-    case "IDEA":
-      produts.code = "II"
-      break
-    case "PyCharm":
-      produts.code = "PC"
-      break
-    case "Rider":
-      produts.code = "RD"
-      break
-    case "RustRover":
-      produts.code = "RR"
-      break
-    case "WebStorm":
-      produts.code = "WS"
-  }
-  params.products.push(produts)
-  console.log(params.products)
+  try {
+    isLoading.value = true;
+    const newProduct = { ...productTemplate, code: getProductCode.value };
+    params.products.push(newProduct);
 
-
-  await KeyGenRequest(JSON.stringify(params)).then(res => {
-    if (res.code == 200) {
-      navigator.clipboard.writeText(res.data)
+    const response = await KeyGenRequest(JSON.stringify(params));
+    
+    if (response.code === 200) {
+      await navigator.clipboard.writeText(response.data);
       msgInfo.success("你已经获取激活码，现在可以直接粘贴啦！", {
         render: rendMessage,
         closable: true,
         duration: 1000
       });
     } else {
-      msgInfo.error("糟糕~激活码丢了~~！", {
-        render: rendMessage,
-        closable: true,
-        duration: 1000
-      });
+      throw new Error('激活码生成失败');
     }
-  });
+  } catch (error) {
+    msgInfo.error("糟糕~激活码丢了~~！", {
+      render: rendMessage,
+      closable: true,
+      duration: 1000
+    });
+  } finally {
+    isLoading.value = false;
+    // Remove the added product
+    params.products.pop();
+  }
 }
 </script>
 
 <template>
-  <n-card class="card" :title="title" @mouseleave="isHovered = false">
-    <n-avatar :size="64" style="background-color: #9a49e5;">
-      <div v-html="pic"></div>
-    </n-avatar>
-    <!-- :size="48"
-    src="https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg"
-/> -->
-    <div @mouseenter="isHovered = true" @mouseleave="isHovered = false"
-      style="border: 1em lightgreen; width: 100%; height: 50%; bottom: 20px;">
-      <n-text class="text-area" v-if="!isHovered">
-        {{ text }}
-      </n-text>
-      <n-button class="btn-copy" text @click="copyCode()" color="#8a2be2" v-if="isHovered">
-        复制
-      </n-button>
+  <div class="card">
+    <div class="card-header">{{ title }}</div>
+    <div class="card-content">
+      <n-avatar :size="48" class="avatar">
+        <div v-html="pic"></div>
+      </n-avatar>
+      <div 
+        class="action-area"
+        @mouseenter="isHovered = true" 
+        @mouseleave="isHovered = false"
+      >
+        <transition name="fade-slide" mode="out-in">
+          <n-text class="text-area" v-if="!isHovered" key="text">
+            {{ text }}
+          </n-text>
+          <n-button 
+            class="btn-copy" 
+            text 
+            @click="copyCode()" 
+            :loading="isLoading"
+            :disabled="isLoading"
+            v-else
+            key="button"
+          >
+            {{ isLoading ? '生成中...' : '复制' }}
+          </n-button>
+        </transition>
+      </div>
     </div>
-  </n-card>
+  </div>
 </template>
 
 <style scoped>
-.card:hover {
-  box-shadow: rgb(255, 255, 255) -10px 20px 30px -12px, rgb(255, 255, 255) 20px 20px 20px -120px;
-  border-radius: 1.5rem;
-  border: 0.2rem solid #af80e7;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  height: 100%;
-  background-color: #9a49e5;
-}
-
 .card {
-  box-shadow: rgb(255, 255, 255) 0px 10px 20px -12px, rgb(255, 255, 255) 0px 10px 20px -12px;
-  border-radius: 1.5rem;
-  border: 0.2rem solid #9a49e5;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-  height: 100%;
-  background-color: #9a49e5;
+  border-radius: 1rem;
+  height: 160px;
+  background-color: var(--primary-color, #9a49e5);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  isolation: isolate;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.btn-copy {
-  border: 0.2rem solid #9a49e5;
-  border-radius: 1.5rem;
-  width: 100%;
-  height: 100%;
-  padding: 10px;
-  opacity: 1;
-  color: black;
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--primary-color, #9a49e5);
+  border-radius: inherit;
+  z-index: -1;
 }
 
-.btn-copy:hover {
-  border: 0.2rem solid #661dab;
-  border-radius: 1.5rem;
+.card-header {
+  padding: 0.75rem 1rem;
+  color: white;
+  font-weight: 500;
+  font-size: 1.1em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  padding: 1rem;
+  gap: 0.5rem;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 20px -10px rgba(255, 255, 255, 0.3);
+}
+
+.avatar {
+  background-color: transparent;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.card:hover .avatar {
+  transform: scale(1.1);
+}
+
+.action-area {
   width: 100%;
-  height: 100%;
-  color: black;
-  opacity: 1;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .text-area {
-  z-index: 3;
-  width: 20%;
-  height: 10%;
-  position: relative;
-  padding-left: 20px;
+  width: 100%;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: monospace;
+  font-size: 0.85em;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-copy {
+  border: none;
+  border-radius: 999px;
+  width: 70%;
+  height: 32px;
+  padding: 0.5rem;
+  color: var(--primary-color, #9a49e5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.95);
+  font-size: 0.9em;
+  font-weight: 500;
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.btn-copy:hover:not(:disabled) {
+  background-color: white;
+  transform: scale(1.05);
+}
+
+.btn-copy:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* 淡入淡出和滑动过渡效果 */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.fade-slide-enter-to,
+.fade-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>

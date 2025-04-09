@@ -7,7 +7,6 @@ import {QueryData} from "../../wailsjs/go/main/App"
 let productsList = ref([])
 function queryData() {
   QueryData().then((res) => {
-    console.log(res)
     if (res.code == 200) {
       productsList.value = res.data===undefined ? [] : res.data["products"]
     }
@@ -16,16 +15,11 @@ function queryData() {
 
 const dealt = ref(false);
 const isHovered = ref(Array(productsList.value.length).fill(false));
-const dealCards = () => {
-  dealt.value = false; // Reset the dealt state
-  setTimeout(() => {
-    dealt.value = true; // Trigger the animation
-  }, 100); // Small delay to ensure reset
-};
 
 const getCardStyle = (index) => {
-  const delay = (index + 1) * 0.1
-  return dealt.value ? {transitionDelay: `${delay}s`} : {}
+  return {
+    animationDelay: dealt.value ? `${index * 0.1}s` : '0s'
+  };
 };
 
 const hoverStyle = (hovered) => ({
@@ -37,35 +31,79 @@ const hoverStyle = (hovered) => ({
 )
 
 onMounted(() => {
-  dealCards();
+  requestAnimationFrame(() => {
+    dealt.value = true;
+  });
   queryData();
 });
 
 </script>
 
 <template>
-  <n-grid :x-gap="30" :y-gap="30" cols="4" style="width: 90%; margin-left: 5%; margin-top: 5%">
-    <n-gi v-for="(item, index) in productsList" :key="index"
-          :class="['grid-item', {'dealt': dealt}]" :style="[getCardStyle(index), hoverStyle(isHovered[index])]"
-          @mouseenter="isHovered[index] = true"
-          @mouseleave="isHovered[index] = false"
-    >
-      <Cards :item="item"/>
-    </n-gi>
-  </n-grid>
+  <div class="grid-container">
+    <n-grid :x-gap="32" :y-gap="32" cols="4" responsive="screen">
+      <n-gi v-for="(item, index) in productsList" :key="index"
+            class="grid-item"
+            :class="{'dealt': dealt}"
+            :style="getCardStyle(index)"
+      >
+        <Cards :item="item"/>
+      </n-gi>
+    </n-grid>
+  </div>
 </template>
 
 <style scoped>
+.grid-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  position: relative;
+}
+
+@keyframes dealCard {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .grid-item {
-  width: 100%;
-  height: 200px;
-  transform: perspective(300px) rotateX(180deg);
   opacity: 0;
-  transition: transform 0.8s ease, opacity 1s ease;
+  transform: translateY(40px) scale(0.95);
+  will-change: transform, opacity;
 }
 
 .grid-item.dealt {
-  transForm: translateY(0);
-  opacity: 1;
+  animation: dealCard 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* 防止动画过程中出现闪烁 */
+.grid-item, .grid-item * {
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+@media (max-width: 1200px) {
+  .grid-container {
+    width: 95%;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid-container {
+    width: 100%;
+    padding: 0 1rem;
+  }
 }
 </style>
