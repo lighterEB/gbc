@@ -61,13 +61,10 @@ jobs:
         shell: bash
 
       - name: Install dependencies (Ubuntu)
-        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+        if: matrix.os == 'ubuntu-latest'
+        run: |
           export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig
           pkg-config --list-all | grep webkit || echo "Webkit not found"
-          wails build -tags webkit2_41 -platform linux/amd64
-        else
-          wails build
-        fi
 
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos-latest'
@@ -81,7 +78,6 @@ jobs:
         run: |
           if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig
-            pkg-config --list-all | grep webkit || echo "Webkit not found"
             wails build -platform linux/amd64
           else
             wails build
