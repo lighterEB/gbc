@@ -25,6 +25,8 @@ jobs:
           build-args: |
             TARGETOS=windows
             TARGETARCH=amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Build macOS
         uses: docker/build-push-action@v4
@@ -36,6 +38,8 @@ jobs:
           build-args: |
             TARGETOS=darwin
             TARGETARCH=amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Build Linux
         uses: docker/build-push-action@v4
@@ -47,6 +51,14 @@ jobs:
           build-args: |
             TARGETOS=linux
             TARGETARCH=amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Debug Build Output
+        run: |
+          ls -la build/bin/
+          echo "Build artifacts:"
+          find build/bin/ -type f -exec file {} \;
 
       - name: Create Release
         id: create_release
