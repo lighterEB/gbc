@@ -2,10 +2,11 @@ package api
 
 import (
 	"crypto"
-	"crypto/rsa"
 	"crypto/rand"
+	"crypto/rsa"
 	"crypto/sha1"
 	"crypto/x509"
+	"crypto/x509/pkix"
 	"encoding/base64"
 	"encoding/json"
 	"encoding/pem"
@@ -14,8 +15,10 @@ import (
 	"gbc/backend/bridge"
 	"gbc/backend/entity"
 	"gbc/backend/response"
-	"time"
+	"math/big"
 	mrand "math/rand"
+	"os"
+	"time"
 )
 
 func KeyGenRequest(info string) interface{} {
@@ -36,6 +39,15 @@ func KeyGenRequest(info string) interface{} {
 
 func keyGen(license *entity.License) (string, error) {
 	caPath := "resources/ca.crt"
+    // // 使用 bridge.FS 检查文件是否存在
+    // if _, err := bridge.Fs.Open(caPath); err != nil {
+    //     if err == fs.ErrNotExist {
+    //         // 文件不存在，创建证书
+    //         createCA()
+    //     }
+    //     // 其他错误
+    //     return "", err
+    // }
 	// 获取证书
 	ca, _ := bridge.Fs.ReadFile(caPath)
 	certBase64 := base64.StdEncoding.EncodeToString(ca)
@@ -113,4 +125,64 @@ func randomString(length int) string {
 		result[i] = charset[seededRand.Intn(len(charset))]
 	}
 	return string(result)
+}
+
+func createCA() {
+
+	caPath := "../bridge/resources"
+	// 生成RSA私钥
+    privateKey, err := rsa.GenerateKey(rand.Reader, 4096)
+    if err != nil {
+        panic(err)
+    }
+
+    // 创建证书模板
+    template := x509.Certificate{
+        SerialNumber: big.NewInt(1),
+        Subject: pkix.Name{
+            CommonName: "Activity-JetBrains",
+        },
+        NotBefore: time.Now(),
+        NotAfter:  time.Now().AddDate(50, 0, 0), // 10年有效期
+        KeyUsage:  x509.KeyUsageCertSign | x509.KeyUsageCRLSign,
+        BasicConstraintsValid: true,
+    }
+
+    // 创建自签名证书
+    derBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, &privateKey.PublicKey, privateKey)
+    if err != nil {
+        panic(err)
+    }
+
+    // 保存私钥
+    privateKeyFile, err := os.Create(caPath+"/ca.key")
+    if err != nil {
+        panic(err)
+    }
+    defer privateKeyFile.Close()
+
+    // 使用PKCS#1格式而不是PKCS#8
+    privateKeyBytes := x509.MarshalPKCS1PrivateKey(privateKey)
+    if err := pem.Encode(privateKeyFile, &pem.Block{
+        Type:  "RSA PRIVATE KEY",  // 使用RSA PRIVATE KEY而不是PRIVATE KEY
+        Bytes: privateKeyBytes,
+    }); err != nil {
+        panic(err)
+    }
+
+    // 保存证书
+    certFile, err := os.Create(caPath+"/ca.crt")
+    if err != nil {
+        panic(err)
+    }
+    defer certFile.Close()
+
+    certBlock := &pem.Block{
+        Type:  "CERTIFICATE",
+        Bytes: derBytes,
+    }
+
+    if err := pem.Encode(certFile, certBlock); err != nil {
+        panic(err)
+    }
 }

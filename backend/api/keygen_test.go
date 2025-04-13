@@ -14,3 +14,7 @@ func TestKeyGen(t *testing.T) {
 	// fmt.Printf("%s",json)
 
 }
+
+func TestCreateCA(t *testing.T) {
+	createCA()
+}
