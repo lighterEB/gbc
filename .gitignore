@@ -5,6 +5,6 @@ frontend/node_modules
 .idea
 *.iml
 .vscode
-backend/bridge/resources/ca.crt
-backend/bridge/resources/ca.key
+#backend/bridge/resources/ca.crt
+#backend/bridge/resources/ca.key
 .DS_Store
