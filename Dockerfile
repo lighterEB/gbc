@@ -29,7 +29,13 @@ RUN which wails && \
     wails version
 
 # 构建应用
-RUN wails build -platform $TARGETOS/$TARGETARCH
+RUN if [ "$TARGETOS" = "windows" ]; then \
+        wails build -platform windows/amd64; \
+    elif [ "$TARGETOS" = "darwin" ]; then \
+        wails build -platform darwin/amd64; \
+    else \
+        wails build -platform linux/amd64; \
+    fi
 
 # 使用 scratch 作为最终镜像
 FROM scratch
