@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -51,6 +54,16 @@ jobs:
 
       - name: Build with Wails
         run: wails build
+
+      - name: Create Release
+        if: matrix.os == 'ubuntu-latest'
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload artifacts to release
         uses: svenstaro/upload-release-action@v2
