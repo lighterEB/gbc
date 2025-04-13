@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM golang:1.21-bullseye AS builder
+FROM --platform=$BUILDPLATFORM golang:1.22-bullseye AS builder
 
 # 安装必要的构建工具
 RUN apt-get update && apt-get install -y \
