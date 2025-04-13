@@ -64,6 +64,15 @@ jobs:
             wails build
           fi
 
+      - name: Debug Build Output
+        run: |
+          echo "Listing build directories:"
+          find build -type d
+          echo "Listing all build artifacts:"
+          find build -type f
+          echo "Contents of build/bin:"
+          ls -la build/bin || echo "build/bin directory not found"
+
       - name: Create Release
         if: matrix.os == 'ubuntu-latest'
         id: create_release
