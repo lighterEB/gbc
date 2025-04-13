@@ -19,8 +19,14 @@ WORKDIR /app
 COPY . .
 
 # 安装 Wails
-RUN go install github.com/wailsapp/wails/v2/cmd/wails@latest && \
-    wails doctor
+RUN go version && \
+    node --version && \
+    npm --version && \
+    go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+# 验证 Wails 安装
+RUN which wails && \
+    wails version
 
 # 构建应用
 RUN wails build -platform $TARGETOS/$TARGETARCH
