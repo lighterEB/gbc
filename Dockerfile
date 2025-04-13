@@ -1,7 +1,16 @@
-FROM --platform=$BUILDPLATFORM golang:1.21-alpine AS builder
+FROM --platform=$BUILDPLATFORM golang:1.21-bullseye AS builder
 
 # 安装必要的构建工具
-RUN apk add --no-cache gcc musl-dev nodejs npm
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    make \
+    nodejs \
+    npm \
+    libgtk-3-dev \
+    libwebkit2gtk-4.0-dev \
+    libayatana-appindicator3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # 设置工作目录
 WORKDIR /app
