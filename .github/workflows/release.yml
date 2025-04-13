@@ -15,11 +15,11 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            asset_name: app-linux-amd64
+            asset_name: gbc-linux-amd64
           - os: macos-latest
-            asset_name: app-macos-amd64
+            asset_name: gbc-macos-amd64
           - os: windows-latest
-            asset_name: app-windows-amd64.exe
+            asset_name: gbc-windows-amd64.exe
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -37,6 +37,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+
+      - name: Get project info
+        id: project_info
+        run: |
+          PROJECT_NAME=$(cat wails.json | grep "name" | head -1 | awk -F: '{ print $2 }' | sed 's/[", ]//g')
+          echo "PROJECT_NAME=$PROJECT_NAME" >> $GITHUB_ENV
+          echo "Project name: $PROJECT_NAME"
 
       - name: Install dependencies (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
@@ -83,10 +90,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set file path
+        id: set_file
+        run: |
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            echo "FILE_PATH=build/bin/${{ env.PROJECT_NAME }}.exe" >> $GITHUB_ENV
+          else
+            echo "FILE_PATH=build/bin/${{ env.PROJECT_NAME }}" >> $GITHUB_ENV
+          fi
+
       - name: Upload artifacts to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/bin/${{ matrix.os == 'windows-latest' && 'app.exe' || 'app' }}
+          file: ${{ env.FILE_PATH }}
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref }} 
