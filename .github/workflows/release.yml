@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'  # 只有在推送 tag 时触发，例如 v1.0.0
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          platforms: windows/amd64
+          platforms: linux/amd64
           load: true
           tags: wails-build:windows
           build-args: |
@@ -32,7 +32,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          platforms: darwin/amd64
+          platforms: linux/amd64
           load: true
           tags: wails-build:darwin
           build-args: |
@@ -54,18 +54,22 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Debug Build Output
+      - name: Extract Build Artifacts
         run: |
-          ls -la build/bin/
-          echo "Build artifacts:"
-          find build/bin/ -type f -exec file {} \;
+          mkdir -p artifacts
+          for container in windows darwin linux; do
+            docker create --name temp-$container wails-build:$container
+            docker cp temp-$container:/bin/. artifacts/
+            docker rm temp-$container
+          done
+          ls -la artifacts/
 
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            build/bin/*
+            artifacts/*
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
