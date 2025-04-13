@@ -47,7 +47,7 @@ jobs:
           brew install pkg-config
 
       - name: Install Wails
-        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.8.0
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.1
 
       - name: Build with Wails
         run: wails build
