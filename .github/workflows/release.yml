@@ -36,13 +36,13 @@ jobs:
           wails-version: 'latest'
           nsis: false
       - uses: actions/upload-artifact@v4
-              with:
-                name: gbc-${{ matrix.build.platform == 'linux/amd64' && 'linux-amd64' || matrix.build.platform == 'windows/amd64' && 'windows-amd64' || 'darwin-universal' }}
-                path: build/bin/
-                if-no-files-found: warn
-                compression-level: 6
-                overwrite: false
-                include-hidden-files: false
+        with:
+          name: gbc-${{ matrix.build.platform == 'linux/amd64' && 'linux-amd64' || matrix.build.platform == 'windows/amd64' && 'windows-amd64' || 'darwin-universal' }}
+          path: build/bin/
+          if-no-files-found: warn
+          compression-level: 6
+          overwrite: false
+          include-hidden-files: false
       - uses: ncipollo/release-action@v1
         with:
           artifacts: build/bin/*
