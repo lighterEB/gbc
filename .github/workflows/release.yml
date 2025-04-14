@@ -36,7 +36,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '22.14'
 
       - name: Install jq
         run: |
@@ -63,16 +63,18 @@ jobs:
       - name: Install dependencies (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libgio-2.0-dev
           export PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/lib/pkgconfig:/usr/share/pkgconfig
           pkg-config --list-all | grep webkit || echo "Webkit not found"
 
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos-latest'
         run: |
-          brew install pkg-config
+          brew install pkg-config webkit2gtk
 
       - name: Install Wails
-        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.1
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.10
 
       - name: Build with Wails
         run: |
