@@ -1,43 +1,31 @@
-name: Release
+name: Build gbc
 
-on:
-  push:
-    tags:
-      - 'v*'
-
-env:
-  # Necessary for most environments as build failure can occur due to OOM issues
-  NODE_OPTIONS: "--max-old-space-size=4096"
+on: push
 
 jobs:
   build:
+    runs-on: ${{ matrix.build.os }}
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
     strategy:
-    # Failure in one platform build won't impact the others
       fail-fast: false
       matrix:
         build:
-          - name: 'gbc'
-            platform:  'linux/amd64'
-            os: 'ubuntu-latest'
-          - name: 'gbc'
-            platform:  'windows/amd64'
-            os: 'windows-latest'
-          - name: 'gbc'
-            platform:  'darwin/universal'
-            os: 'macos-latest'
-
-    runs-on: ${{ matrix.build.os }}
+          - platform: linux/amd64
+            os: ubuntu-latest
+          - platform: windows/amd64
+            os: windows-latest
+          - platform: darwin/universal
+            os: macos-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
         with:
           submodules: recursive
-
-      - name: Build wails
-        uses: dAppServer/wails-build-action@v2.2
-        id: build
+      - uses: dAppServer/wails-build-action@v3
         with:
-          build-name: ${{ matrix.build.name }}
+          build-name: gbc
           build-platform: ${{ matrix.build.platform }}
           go-version: '1.24.2'
           node-version: '22.14.0'
+          wails-version: '2.9.3'
+          nsis: false
