@@ -41,11 +41,3 @@ jobs:
           build-platform: ${{ matrix.build.platform }}
           go-version: '1.24.2'
           node-version: '22.14.0'
-
-      - name: Upload artifacts to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ steps.build.outputs.path }}
-          asset_name: ${{ matrix.build.name }}-${{ matrix.build.platform }}
-          tag: ${{ github.ref }}
