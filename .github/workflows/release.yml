@@ -18,10 +18,10 @@ jobs:
           - platform: darwin/universal
             os: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - uses: dAppServer/wails-build-action@v2.2
+      - uses: dAppServer/wails-build-action@main
         with:
           build-name: gbc
           build-platform: ${{ matrix.build.platform }}
@@ -29,3 +29,8 @@ jobs:
           node-version: '22.14.0'
           wails-version: '2.9.3'
           nsis: false
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: gbc-${{ matrix.build.platform }}
+          path: build/bin/
