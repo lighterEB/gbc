@@ -1,6 +1,12 @@
-name: Build gbc
+name: Build and Release gbc
 
-on: push
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -34,3 +40,11 @@ jobs:
         with:
           name: gbc
           path: build/bin/${{ matrix.build.platform }}
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: build/bin/${{ matrix.build.platform }}/*
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
