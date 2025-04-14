@@ -36,13 +36,16 @@ jobs:
           wails-version: 'latest'
           nsis: false
       - uses: actions/upload-artifact@v4
-        if: success()
-        with:
-          name: gbc
-          path: build/bin/${{ matrix.build.platform }}
+              with:
+                name: gbc-${{ matrix.build.platform == 'linux/amd64' && 'linux-amd64' || matrix.build.platform == 'windows/amd64' && 'windows-amd64' || 'darwin-universal' }}
+                path: build/bin/
+                if-no-files-found: warn
+                compression-level: 6
+                overwrite: false
+                include-hidden-files: false
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: build/bin/${{ matrix.build.platform }}/*
+          artifacts: build/bin/*
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
