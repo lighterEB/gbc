@@ -32,5 +32,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: gbc-${{ matrix.build.platform }}
-          path: build/bin/
+          name: gbc
+          path: build/bin/${{ matrix.build.platform }}
